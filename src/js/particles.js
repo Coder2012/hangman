@@ -7,49 +7,91 @@ class Particles {
     this._loader = loader
     this._position = undefined
     this._emit = false
+    // this._config = {
+    //   'alpha': {
+    //     'start': 0.4,
+    //     'end': 0
+    //   },
+    //   'scale': {
+    //     'start': 1,
+    //     'end': 0.3
+    //   },
+    //   'color': {
+    //     'start': '000000',
+    //     'end': '000000'
+    //   },
+    //   'speed': {
+    //     'start': 100,
+    //     'end': 200
+    //   },
+    //   'startRotation': {
+    //     'min': 0,
+    //     'max': 360
+    //   },
+    //   'rotationSpeed': {
+    //     'min': 0,
+    //     'max': 10
+    //   },
+    //   'lifetime': {
+    //     'min': 0.1,
+    //     'max': 0.2
+    //   },
+    //   'frequency': 0.008,
+    //   'emitterLifetime': 0.31,
+    //   'maxParticles': 100,
+    //   'pos': {
+    //     'x': 0,
+    //     'y': 0
+    //   },
+    //   'addAtBack': false,
+    //   'spawnType': 'circle',
+    //   'spawnCircle': {
+    //     'x': 0,
+    //     'y': 0,
+    //     'r': 20
+    //   }
+    // }
     this._config = {
-      'alpha': {
-        'start': 0.4,
-        'end': 0
+      "alpha": {
+        "start": 0.8,
+        "end": 0.4
       },
-      'scale': {
-        'start': 1,
-        'end': 0.3
+      "scale": {
+        "start": 1,
+        "end": 0.3
       },
-      'color': {
-        'start': '000000',
-        'end': '000000'
+      "color": {
+        "start": "e3f9ff",
+        "end": "0ec8f8"
       },
-      'speed': {
-        'start': 100,
-        'end': 200
+      "speed": {
+        "start": 200,
+        "end": 200
       },
-      'startRotation': {
-        'min': 0,
-        'max': 360
+      "startRotation": {
+        "min": 0,
+        "max": 0
       },
-      'rotationSpeed': {
-        'min': 0,
-        'max': 10
+      "rotationSpeed": {
+        "min": 0,
+        "max": 0
       },
-      'lifetime': {
-        'min': 0.1,
-        'max': 0.2
+      "lifetime": {
+        "min": 0.8,
+        "max": 0.8
       },
-      'frequency': 0.008,
-      'emitterLifetime': 0.31,
-      'maxParticles': 100,
-      'pos': {
-        'x': 0,
-        'y': 0
+      "frequency": 0.2,
+      "emitterLifetime": 0.5,
+      "maxParticles": 32,
+      "pos": {
+        "x": 0,
+        "y": 0
       },
-      'addAtBack': false,
-      'spawnType': 'circle',
-      'spawnCircle': {
-        'x': 0,
-        'y': 0,
-        'r': 20
-      }
+      "addAtBack": false,
+      "spawnType": "burst",
+      "particlesPerWave": 8,
+      "particleSpacing": 45,
+      "angleStart": 0
     }
   }
 
@@ -71,6 +113,10 @@ class Particles {
   }
   set position (newPosition) {
     this._position = newPosition
+    if(this._emitter) {
+      this._emitter.resetPositionTracking()
+      this._emitter.updateOwnerPos(this.position.x, this.position.y)
+    }
   }
   get emitter () {
     return this._emitter

@@ -1,7 +1,15 @@
+import { MAX_GUESSES } from "../js/constants";
+import { correctKey } from "./actions";
+
 const initialState = {
-    isRunning: false,
-    showKeyboard: false,
-    selectedKey: null
+    showKeyboard: true,
+    selectedKey: null,
+    attemptsLeft: MAX_GUESSES,
+    complete: false,
+    incorrectKey: undefined,
+    selectedKey: undefined,
+    word: undefined,
+    mask: undefined
 }
 
 export default initialState

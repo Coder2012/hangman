@@ -1,21 +1,12 @@
 import * as PIXI from 'pixi.js'
-import keyboardJS from 'keyboardjs'
-import Test from './test.js'
+
 import Keyboard from './keyboard'
 import words from './words'
 
 import store from '../redux/configureStore'
-import { startGame, showKeyboard, isKeyCorrect, correctKey } from '../redux/actions'
+import { startGame, showKeyboard, incorrectKey, finishGame, setWord } from '../redux/actions'
 
-let word = [], mask = []
-
-const unsubscribe = store.subscribe(() => {
-  if(store.getState().game.selectedKey !== store.getState().game.correctKey) {
-    updateGuess()
-  }
-})
-
-store.dispatch(startGame())
+let word = [], mask = [], statusText, guessText, startButton, keyboard, elapsed = Date.now()
 
 const app = new PIXI.Application({
   autoResize: true,
@@ -28,105 +19,125 @@ document.body.appendChild(app.view)
 
 const loader = app.loader
 loader.add('fonts/font.fnt')
+loader.add('images/particle.png')
 loader.add('images/data.json').load(setup)
 
 function setup () {
-  var text1 = new PIXI.Text('This is HANGMAN', {
+  statusText = new PIXI.Text('Let\'s Play HANGMAN', {
     fontFamily: "Chelsea Market",
     fontSize: 32,
     fill: "#628297"
   });
-  text1.x = (app.screen.width * 0.5) - (text1.width * 0.5);
-  text1.y = 30;
+  statusText.x = (app.screen.width * 0.5) - (statusText.width * 0.5)
+  statusText.y = 30
 
-  let keyboard = new Keyboard(app.renderer)
+  guessText = new PIXI.Text('', {
+    fontFamily: "Chelsea Market",
+    fontSize: 32,
+    fill: "#628297"
+  });
+  
+  guessText.y = statusText.y + 40
+
+  keyboard = new Keyboard(app, loader)
   app.stage.addChild(keyboard)
   
-  app.stage.addChild(text1)
+  app.stage.addChild(statusText)
+  app.stage.addChild(guessText)
   keyboard.x = app.screen.width * 0.5 - keyboard.width * 0.5
   keyboard.y = app.screen.height - 60 - keyboard.height
 
-  const test = new Test(app.ticker)
-
-  addKeyboard()
   addActions()
-  getWord()
+  subscribe()
+  animate()
 }
 
 function getWord() {
   let len = words.length
   word = words[Math.floor(Math.random() * len)].toUpperCase().split('')
-  mask = Array.from({ length: word.length }, () => '-');
+  store.dispatch(setWord(word))
 }
 
 function updateGuess() {
   let letter = store.getState().game.selectedKey
 
-  let foundChars = word.map((char, index) => {
-    if(char === letter) {
-      return { index: index, char: char }
-    }
-  }).filter(obj => obj && obj.index >= 0)
+  updateGuessText()
 
-  foundChars.forEach(item => {
-    mask[item.index] = item.char
-  })
-
-  if(mask.indexOf(letter) !== -1) {
-    store.dispatch(correctKey(letter))
+  if(hasSolved() || store.getState().game.attemptsLeft === 0) {
+    // store.dispatch(finishGame())
   }
+}
 
-  console.log(word, letter, foundChars, mask)
-  console.log(hasSolved())
+function updateGuessText() {
+  guessText.text = store.getState().game.mask.join(' ')
+  guessText.x = (app.screen.width * 0.5) - (guessText.width * 0.5);
+}
+
+function gameOver() {
+  if(hasSolved()) {
+    console.log('well done')
+  }else{
+    console.log('unlucky!')
+  }
+  startButton.visible = true;
+}
+
+function restartGame() {
+  store.dispatch(startGame())
+  store.dispatch(showKeyboard(true))
+
+  getWord()
+  updateGuessText()
 }
 
 function hasSolved() {
-  return mask.indexOf('-') === -1
+  return mask.indexOf('_') === -1
 }
 
 function addActions() {
-  let texture = loader.resources['images/data.json'].textures['keyboard.png']
-  let keyboardButton = new PIXI.Sprite(texture)
-  keyboardButton.interactive = true
-  keyboardButton.tint = 0xff0000
-  keyboardButton.x = app.screen.width - keyboardButton.width - 20
-  keyboardButton.y = app.screen.height - keyboardButton.height - 20
-  keyboardButton.on('pointerdown', () => {
-    store.dispatch(showKeyboard(!store.getState().game.showKeyboard))
+  startButton = new PIXI.Sprite()
+  startButton.interactive = true
+  startButton.on('pointerdown', () => {
+    startButton.visible = false
+    restartGame()
   })
-  app.stage.addChild(keyboardButton)
+
+  let startText = new PIXI.Text('START GAME', {
+    fontFamily: "Chelsea Market",
+    fontSize: 32,
+    fill: "#628297"
+  })
+
+  let background = new PIXI.Graphics()
+  background.beginFill(0x00ff00, 0.2);
+  background.drawRoundedRect(0, 0, 240, 40, 8);
+  background.endFill();
+  
+  startText.x = (background.width * 0.5) - (startText.width * 0.5)
+  startButton.x = (app.screen.width * 0.5) - (background.width * 0.5)
+  startButton.y = app.screen.height - 60
+  
+  startButton.addChild(background, startText)
+  app.stage.addChild(startButton)
 }
 
-function addKeyboard () {
-  const keys = [
-      { key:'a', press: aPress, release: aRelease }, 
-      { key:'b', press: bPress, release: bRelease } 
-    ]
-
-  keys.forEach((map) => {
-    keyboardJS.bind(map.key, (e) => {
-      console.log(map.key + ' is pressed')
-      map.press()
-      e.preventRepeat()
-    }, (e) => {
-      console.log(map.key + ' is released')
-      map.release()
-    })
+function subscribe() {
+  store.subscribe(() => {
+    let state = store.getState().game
+    if(!state.complete && state.selectedKey) {
+      updateGuess()
+    }else if(state.complete){
+      gameOver()
+    }
+  
   })
 }
 
-function aPress () {
-  console.log('called aPress function')
-}
+function animate () {
+  const now = Date.now()
+  if (keyboard) keyboard.update((now - elapsed) * 0.001)
 
-function aRelease () {
-  console.log('called aRelease function')
-}
-
-function bPress () {
-  console.log('called bPress function')
-}
-
-function bRelease () {
-  console.log('called bRelease function')
+  elapsed = now
+  app.renderer.render(app.stage)
+  requestAnimationFrame(animate)
 }

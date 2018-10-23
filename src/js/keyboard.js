@@ -1,23 +1,36 @@
 import * as PIXI from 'pixi.js'
+import Particles from './particles'
 import store from '../redux/configureStore'
 import { selectedKey } from '../redux/actions';
+import { MAX_GUESSES } from './constants';
 
 class Keyboard extends PIXI.Container {
-    constructor(renderer) {
+    constructor(app, loader) {
         super()
 
-        this.renderer = renderer
-        
+        this.renderer = app.renderer
+        this.stage = app.stage
+        this.loader = loader
         this.interactive = true
-        this.keySize = 60
+        this.particles 
+        this.keySize = 48
         this.keys = []
 
         this.createKeys()
+        this.createEmitter()
         this.setVisibility()
 
         const unsubscribe = store.subscribe(() => {
-            this.setVisibility()
-            this.setSelectedKey()
+            let state = store.getState().game
+
+            if(!state.complete && state.selectedKey !== undefined) {
+                this.setVisibility()
+                this.setSelectedKey()
+            }
+            
+            if(state.attemptsLeft === MAX_GUESSES){
+                this.restart()
+            }
         })
     }
     
@@ -29,12 +42,21 @@ class Keyboard extends PIXI.Container {
 
     setSelectedKey() {
         let id = store.getState().game.selectedKey
-        let correctId = store.getState().game.correctKey
-
-        let tint = (id === correctId) ? 0x00ff00 : 0xff0000
-
+        let mask = store.getState().game.mask
+        let tint
+        
+        if(mask.includes(id)) {
+            tint = 0x00ff00
+            this.particles.position = { x: this.keys[id].x + this.keySize / 2, y: this.keys[id].y + this.keySize / 2 }
+            this.particles.emit = true
+            setTimeout(() => {
+                this.particles.emit = false
+            }, 500);
+        }else{
+            tint = 0xff0000
+        }
+        
         if(id) {
-            // this.keys[id].alpha = 0.8
             this.keys[id].text.tint = tint
             this.keys[id].interactive = false
         }
@@ -53,7 +75,7 @@ class Keyboard extends PIXI.Container {
 
             x += this.keySize
 
-            if(x > 3 * this.keySize){
+            if(x > 5 * this.keySize){
                 x = 0
                 y += this.keySize
             }
@@ -80,7 +102,7 @@ class Keyboard extends PIXI.Container {
     addText(letter) {
         let text = new PIXI.Text(letter, {
             fontFamily: "Chelsea Market",
-            fontSize: 64,
+            fontSize: 48,
             fill: "#628297"
         })
 
@@ -95,6 +117,26 @@ class Keyboard extends PIXI.Container {
         textbg.endFill();
 
         return textbg
+    }
+
+    createEmitter() {
+        this.particles = new Particles(this, this.loader)
+        this.particles.position = new PIXI.Point(0, 0)
+        this.particles.init()
+        // this.particles.emit = true
+    }
+
+    restart() {
+        // console.log('restart')
+        // Object.keys(this.keys).forEach(id => {
+        //     let key = this.keys[id]
+        //     key.text.tint = 0xffffff
+        //     key.interactive = true
+        // })
+    }
+
+    update(value) {
+        this.particles.update(value)
     }
 }
 

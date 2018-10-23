@@ -1,12 +1,15 @@
 import { combineReducers } from 'redux'
-import { START_GAME, SHOW_KEYBOARD, SELECTED_KEY, CORRECT_KEY } from './actions'
+import { START_GAME, SHOW_KEYBOARD, SELECTED_KEY, FINISH_GAME, SET_WORD } from './actions'
 import initialState from './initialState'
 
 function game(state = initialState, action) {
     switch (action.type) {
         case START_GAME:
+            return Object.assign({}, state, initialState)
+
+        case FINISH_GAME:
             return Object.assign({}, state, {
-                isRunning: true
+                complete: true
             })
 
         case SHOW_KEYBOARD:
@@ -14,14 +17,36 @@ function game(state = initialState, action) {
                 showKeyboard: action.visibility
             })
 
-        case SELECTED_KEY:
+        case SET_WORD:
             return Object.assign({}, state, {
-                selectedKey: action.id
+                word: action.word,
+                mask: Array.from({ length: action.word.length }, () => '_')
             })
 
-        case CORRECT_KEY:
+        case SELECTED_KEY:
+            let mask = state.mask
+            let foundChars = state.word.map((char, index) => {
+                if(char === action.id) {
+                    return { index: index, char: char }
+                }
+            }).filter(obj => obj && obj.index >= 0)
+
+            foundChars.forEach(item => {
+                mask[item.index] = item.char
+            })
+
+            let attempts = state.attemptsLeft
+            if(!foundChars.length) {
+                attempts --
+            }
+
+            let isComplete = (attempts === 0) || (mask.length === state.word.length && mask.every((value, index) => value === state.word[index]))
+
             return Object.assign({}, state, {
-                correctKey: action.id
+                selectedKey: action.id,
+                mask: mask,
+                attemptsLeft: attempts,
+                complete: isComplete
             })
 
             default:
