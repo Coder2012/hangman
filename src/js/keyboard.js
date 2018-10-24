@@ -23,15 +23,41 @@ class Keyboard extends PIXI.Container {
         const unsubscribe = store.subscribe(() => {
             let state = store.getState().game
 
-            if(!state.complete && state.selectedKey !== undefined) {
-                this.setVisibility()
-                this.setSelectedKey()
-            }
-            
-            if(state.attemptsLeft === MAX_GUESSES){
-                this.restart()
-            }
+            // if(state.selectedKey !== undefined) {
+            //     this.setVisibility()
+            //     this.setSelectedKey()
+            // }
         })
+
+        this.setSelectedKey = this.setSelectedKey.bind(this)
+        this.onComplete = this.onComplete.bind(this)
+        this.observeStore(store, (state) => state, this.setSelectedKey)
+        this.observeStore(store, (state) => state.complete, this.onComplete)
+    }
+
+    onComplete(complete) {
+        console.log('onComplete', complete)
+        if(complete) {
+            this.enable(false)
+        }else{
+            this.enable(true)
+        }
+    }
+
+    observeStore(store, select, onChange) {
+        let currentState;
+      
+        function handleChange() {
+          let nextState = select(store.getState().game);
+          if (nextState !== currentState) {
+            currentState = nextState;
+            onChange(currentState);
+          }
+        }
+      
+        let unsubscribe = store.subscribe(handleChange);
+        handleChange();
+        return unsubscribe;
     }
     
     setVisibility() {
@@ -40,9 +66,11 @@ class Keyboard extends PIXI.Container {
         }
     }
 
-    setSelectedKey() {
-        let id = store.getState().game.selectedKey
-        let mask = store.getState().game.mask
+    setSelectedKey(state) {
+        if(state.selectedKey === undefined) return
+
+        let id = state.selectedKey
+        let mask = state.mask
         let tint
         
         if(mask.includes(id)) {
@@ -93,7 +121,6 @@ class Keyboard extends PIXI.Container {
         text.y = this.keySize * 0.5 - text.height * 0.5
         key.addChild(text)
 
-        key.interactive = true
         key.id = letter
         key.text = text
         return key
@@ -126,13 +153,15 @@ class Keyboard extends PIXI.Container {
         // this.particles.emit = true
     }
 
-    restart() {
-        // console.log('restart')
-        // Object.keys(this.keys).forEach(id => {
-        //     let key = this.keys[id]
-        //     key.text.tint = 0xffffff
-        //     key.interactive = true
-        // })
+    enable(value) {
+        console.log('enable keys', value)
+        Object.keys(this.keys).forEach(id => {
+            let key = this.keys[id]
+            key.interactive = value
+            if(value) {
+                key.text.tint = 0xffffff
+            }
+        })
     }
 
     update(value) {

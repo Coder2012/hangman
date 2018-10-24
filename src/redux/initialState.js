@@ -8,8 +8,8 @@ const initialState = {
     complete: false,
     incorrectKey: undefined,
     selectedKey: undefined,
-    word: undefined,
-    mask: undefined
+    word: [],
+    mask: []
 }
 
 export default initialState

@@ -6,7 +6,14 @@ import words from './words'
 import store from '../redux/configureStore'
 import { startGame, showKeyboard, incorrectKey, finishGame, setWord } from '../redux/actions'
 
-let word = [], mask = [], statusText, guessText, startButton, keyboard, elapsed = Date.now()
+let word = [], 
+  mask = [], 
+  statusText, 
+  guessText, 
+  startButton, 
+  keyboard, 
+  elapsed = Date.now(),
+  unsubscribe
 
 const app = new PIXI.Application({
   autoResize: true,
@@ -21,6 +28,40 @@ const loader = app.loader
 loader.add('fonts/font.fnt')
 loader.add('images/particle.png')
 loader.add('images/data.json').load(setup)
+
+function subscribe() {
+  return store.subscribe(() => {
+    let state = store.getState().game
+    updateGuessText()
+  })
+}
+
+onComplete = onComplete.bind(this)
+updateGuessText = updateGuessText.bind(this)
+observeStore(store, state => state.complete, onComplete)
+
+function onComplete(complete) {
+  console.log('app onComplete', complete)
+  if(complete) {
+    gameOver()
+  }
+}
+
+function observeStore(store, select, onChange) {
+  let currentState;
+
+  function handleChange() {
+    let nextState = select(store.getState().game);
+    if (nextState !== currentState) {
+      currentState = nextState;
+      onChange(currentState);
+    }
+  }
+
+  let unsubscribe = store.subscribe(handleChange);
+  handleChange();
+  return unsubscribe;
+}
 
 function setup () {
   statusText = new PIXI.Text('Let\'s Play HANGMAN', {
@@ -48,7 +89,7 @@ function setup () {
   keyboard.y = app.screen.height - 60 - keyboard.height
 
   addActions()
-  subscribe()
+  unsubscribe = subscribe()
   animate()
 }
 
@@ -80,14 +121,16 @@ function gameOver() {
     console.log('unlucky!')
   }
   startButton.visible = true;
+  unsubscribe()
 }
 
 function restartGame() {
+  unsubscribe = subscribe()
   store.dispatch(startGame())
   store.dispatch(showKeyboard(true))
 
   getWord()
-  updateGuessText()
+  // updateGuessText()
 }
 
 function hasSolved() {
@@ -119,18 +162,6 @@ function addActions() {
   
   startButton.addChild(background, startText)
   app.stage.addChild(startButton)
-}
-
-function subscribe() {
-  store.subscribe(() => {
-    let state = store.getState().game
-    if(!state.complete && state.selectedKey) {
-      updateGuess()
-    }else if(state.complete){
-      gameOver()
-    }
-  
-  })
 }
 
 function animate () {
