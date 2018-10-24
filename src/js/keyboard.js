@@ -20,15 +20,6 @@ class Keyboard extends PIXI.Container {
         this.createEmitter()
         this.setVisibility()
 
-        const unsubscribe = store.subscribe(() => {
-            let state = store.getState().game
-
-            // if(state.selectedKey !== undefined) {
-            //     this.setVisibility()
-            //     this.setSelectedKey()
-            // }
-        })
-
         this.setSelectedKey = this.setSelectedKey.bind(this)
         this.onComplete = this.onComplete.bind(this)
         this.observeStore(store, (state) => state, this.setSelectedKey)

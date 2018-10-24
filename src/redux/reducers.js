@@ -25,22 +25,19 @@ function game(state = initialState, action) {
 
         case SELECTED_KEY:
             let mask = state.mask
-            let foundChars = state.word.map((char, index) => {
-                if(char === action.id) {
-                    return { index: index, char: char }
-                }
-            }).filter(obj => obj && obj.index >= 0)
+            let word = state.word
+            let attempts = state.attemptsLeft
+            let foundChars = getCharsInWord(word, action.id)
 
             foundChars.forEach(item => {
                 mask[item.index] = item.char
             })
 
-            let attempts = state.attemptsLeft
             if(!foundChars.length) {
                 attempts --
             }
 
-            let isComplete = (attempts === 0) || (mask.length === state.word.length && mask.every((value, index) => value === state.word[index]))
+            let isComplete = isGameComplete(attempts, mask, word)
 
             return Object.assign({}, state, {
                 selectedKey: action.id,
@@ -52,6 +49,18 @@ function game(state = initialState, action) {
             default:
                 return state;
     }
+}
+
+function getCharsInWord(arr, id) {
+    return arr.map((char, index) => {
+        if(char === id) {
+            return { index: index, char: char }
+        }
+    }).filter(obj => obj && obj.index >= 0)
+}
+
+function isGameComplete(attempts, mask, word) {
+    return (attempts === 0) || mask.every((value, index) => value === word[index])
 }
 
 const hangman = combineReducers({

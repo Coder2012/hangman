@@ -31,7 +31,6 @@ loader.add('images/data.json').load(setup)
 
 function subscribe() {
   return store.subscribe(() => {
-    let state = store.getState().game
     updateGuessText()
   })
 }
@@ -99,16 +98,6 @@ function getWord() {
   store.dispatch(setWord(word))
 }
 
-function updateGuess() {
-  let letter = store.getState().game.selectedKey
-
-  updateGuessText()
-
-  if(hasSolved() || store.getState().game.attemptsLeft === 0) {
-    // store.dispatch(finishGame())
-  }
-}
-
 function updateGuessText() {
   guessText.text = store.getState().game.mask.join(' ')
   guessText.x = (app.screen.width * 0.5) - (guessText.width * 0.5);
@@ -130,7 +119,6 @@ function restartGame() {
   store.dispatch(showKeyboard(true))
 
   getWord()
-  // updateGuessText()
 }
 
 function hasSolved() {
