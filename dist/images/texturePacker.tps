@@ -32,7 +32,7 @@
         <key>dpi</key>
         <uint>72</uint>
         <key>dataFormat</key>
-        <string>pixijs</string>
+        <string>pixijs4</string>
         <key>textureFileName</key>
         <filename></filename>
         <key>flipPVR</key>
@@ -181,23 +181,47 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
-            <key type="filename">keyboard.png</key>
+            <key type="filename">frame_1.png</key>
+            <key type="filename">frame_2.png</key>
+            <key type="filename">frame_3.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>32,32,64,64</rect>
+                <rect>38,50,77,100</rect>
                 <key>scale9Paddings</key>
-                <rect>32,32,64,64</rect>
+                <rect>38,50,77,100</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">frame_4.png</key>
+            <key type="filename">frame_5.png</key>
+            <key type="filename">frame_6.png</key>
+            <key type="filename">frame_7.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>39,50,79,100</rect>
+                <key>scale9Paddings</key>
+                <rect>39,50,79,100</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
         </map>
         <key>fileList</key>
         <array>
-            <filename>keyboard.png</filename>
+            <filename>frame_3.png</filename>
+            <filename>frame_4.png</filename>
+            <filename>frame_5.png</filename>
+            <filename>frame_6.png</filename>
+            <filename>frame_7.png</filename>
+            <filename>frame_1.png</filename>
+            <filename>frame_2.png</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>
