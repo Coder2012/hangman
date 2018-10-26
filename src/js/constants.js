@@ -1,1 +1,1 @@
-export const MAX_GUESSES = 8
+export const MAX_GUESSES = 6

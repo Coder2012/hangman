@@ -5,13 +5,15 @@ import words from './words'
 
 import store from '../redux/configureStore'
 import { startGame, showKeyboard, incorrectKey, finishGame, setWord } from '../redux/actions'
+import { MAX_GUESSES } from './constants';
 
-let word = [], 
-  mask = [], 
-  statusText, 
-  guessText, 
-  startButton, 
-  keyboard, 
+let word = [],
+  mask = [],
+  anim,
+  statusText,
+  guessText,
+  startButton,
+  keyboard,
   elapsed = Date.now(),
   unsubscribe
 
@@ -25,12 +27,13 @@ const app = new PIXI.Application({
 document.body.appendChild(app.view)
 
 const loader = app.loader
-loader.add('fonts/font.fnt')
+// loader.add('fonts/font.fnt')
 loader.add('images/particle.png')
 loader.add('images/data.json').load(setup)
 
 function subscribe() {
   return store.subscribe(() => {
+    updateanim(store.getState().game.attemptsLeft)
     updateGuessText()
   })
 }
@@ -41,7 +44,7 @@ observeStore(store, state => state.complete, onComplete)
 
 function onComplete(complete) {
   console.log('app onComplete', complete)
-  if(complete) {
+  if (complete) {
     gameOver()
   }
 }
@@ -62,7 +65,19 @@ function observeStore(store, select, onChange) {
   return unsubscribe;
 }
 
-function setup () {
+function setup() {
+  var frames = [];
+
+  for (var i = 1; i < 8; i++) {
+    console.log(`frame_${i}.png`)
+    frames.push(PIXI.Texture.fromFrame(`frame_${i}.png`));
+  }
+
+  anim = new PIXI.extras.AnimatedSprite(frames);
+  anim.x = (app.screen.width * 0.5) - (anim.width * 0.5)
+  anim.y = 110
+  app.stage.addChild(anim)
+
   statusText = new PIXI.Text('Let\'s Play HANGMAN', {
     fontFamily: "Chelsea Market",
     fontSize: 32,
@@ -76,12 +91,12 @@ function setup () {
     fontSize: 32,
     fill: "#628297"
   });
-  
+
   guessText.y = statusText.y + 40
 
   keyboard = new Keyboard(app, loader)
   app.stage.addChild(keyboard)
-  
+
   app.stage.addChild(statusText)
   app.stage.addChild(guessText)
   keyboard.x = app.screen.width * 0.5 - keyboard.width * 0.5
@@ -103,10 +118,15 @@ function updateGuessText() {
   guessText.x = (app.screen.width * 0.5) - (guessText.width * 0.5);
 }
 
+function updateanim(attemptsLeft) {
+  let frame = MAX_GUESSES - attemptsLeft
+  anim.gotoAndStop(frame)
+}
+
 function gameOver() {
-  if(hasSolved()) {
+  if (hasSolved()) {
     console.log('well done')
-  }else{
+  } else {
     console.log('unlucky!')
   }
   startButton.visible = true;
@@ -143,16 +163,16 @@ function addActions() {
   background.beginFill(0x00ff00, 0.2);
   background.drawRoundedRect(0, 0, 240, 40, 8);
   background.endFill();
-  
+
   startText.x = (background.width * 0.5) - (startText.width * 0.5)
   startButton.x = (app.screen.width * 0.5) - (background.width * 0.5)
   startButton.y = app.screen.height - 60
-  
+
   startButton.addChild(background, startText)
   app.stage.addChild(startButton)
 }
 
-function animate () {
+function animate() {
   const now = Date.now()
   if (keyboard) keyboard.update((now - elapsed) * 0.001)
 
