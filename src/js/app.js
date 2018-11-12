@@ -15,6 +15,20 @@ let word = [],
   elapsed = Date.now(),
   unsubscribe
 
+let style = new PIXI.TextStyle({
+    fontFamily: "Chelsea Market",
+    fontSize: 32,
+    fontWeight: 'bold',
+    fill: ['#ffffff', '#00ff99'], // gradient
+    stroke: '#4a1850',
+    strokeThickness: 5,
+    dropShadow: true,
+    dropShadowColor: '#000000',
+    dropShadowBlur: 4,
+    dropShadowAngle: Math.PI / 6,
+    dropShadowDistance: 6,
+});
+
 const app = new PIXI.Application({
   autoResize: true,
   width: window.innerWidth,
@@ -63,19 +77,11 @@ function observeStore(store, select, onChange) {
 }
 
 function setup () {
-  statusText = new PIXI.Text('Let\'s Play HANGMAN', {
-    fontFamily: "Chelsea Market",
-    fontSize: 32,
-    fill: "#628297"
-  });
+  statusText = new PIXI.Text('Let\'s Play HANGMAN', style);
   statusText.x = (app.screen.width * 0.5) - (statusText.width * 0.5)
   statusText.y = 30
 
-  guessText = new PIXI.Text('', {
-    fontFamily: "Chelsea Market",
-    fontSize: 32,
-    fill: "#628297"
-  });
+  guessText = new PIXI.Text('', style);
   
   guessText.y = statusText.y + 40
 
@@ -98,16 +104,24 @@ function getWord() {
   store.dispatch(setWord(word))
 }
 
+function updateStatusText(msg, color = '#00ff99') {
+  statusText.text = msg;
+  statusText.style.fill = ['#ffffff', color]
+  statusText.x = (app.screen.width * 0.5) - (statusText.width * 0.5)
+}
+
 function updateGuessText() {
   guessText.text = store.getState().game.mask.join(' ')
-  guessText.x = (app.screen.width * 0.5) - (guessText.width * 0.5);
+  guessText.x = (app.screen.width * 0.5) - (guessText.width * 0.5)
 }
 
 function gameOver() {
   if(hasSolved()) {
     console.log('well done')
+    updateStatusText('YOU WON!!!')
   }else{
     console.log('unlucky!')
+    updateStatusText('OHHH UNLUCKY!', '#990000')
   }
   startButton.visible = true;
   unsubscribe()
