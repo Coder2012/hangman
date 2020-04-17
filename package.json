@@ -7,10 +7,13 @@
     "redux": "^4.0.1"
   },
   "devDependencies": {
-    "babel-core": "^6.23.1",
-    "babel-loader": "^7.1.0",
-    "babel-preset-env": "^1.7.0",
+    "@babel/core": "^7.9.0",
+    "@babel/plugin-proposal-object-rest-spread": "^7.9.5",
+    "@babel/preset-env": "^7.9.5",
+    "babel-loader": "^8.1.0",
     "copy-webpack-plugin": "2.1.6",
+    "effector": "^20.13.7",
+    "effector-logger": "^0.5.0",
     "html-webpack-plugin": "^2.28.0",
     "keyboardjs": "^2.3.3",
     "pixi-particles": "^2.1.9",
