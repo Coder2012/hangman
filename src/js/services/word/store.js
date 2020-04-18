@@ -25,19 +25,13 @@ export const $word = createStore(initialState, { name: 'word' })
   .on(events.guessLetter, (state, guessedLetter) => {
     const letterMap = [...state.word].map((letter) => (letter === guessedLetter ? guessedLetter : false))
     const mask = [...state.mask].map((_, index) => (letterMap[index] ? guessedLetter : state.mask[index]))
+    const notGuessed = letterMap.some(Boolean)
 
-    return letterMap.some(Boolean)
-      ? {
-        ...state,
-        mask: mask.join(''),
-        guessedLetter,
-        correctLetter: true,
-        ...(mask.includes('_') ? {} : { guessedWord: true })
-      }
-      : {
-        ...state,
-        failed: state.failed + 1,
-        guessedLetter,
-        correctLetter: false
-      }
+    return {
+      ...state,
+      ...(notGuessed ? { mask: mask.join('') } : { failed: state.failed + 1 }),
+      guessedLetter,
+      correctLetter: notGuessed,
+      ...(mask.includes('_') ? {} : { guessedWord: true })
+    }
   })
