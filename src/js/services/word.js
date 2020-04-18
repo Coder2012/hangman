@@ -1,26 +1,27 @@
 import { createEvent, createStore } from 'effector-logger';
+import { start, guessLetter } from '../events/game';
 import words from '../words';
 
 const initialState = {
   word: '',
   mask: '',
   failed: 0,
-  guessed: false,
+  guessedLetter: false,
+  correctLetter: false,
+  guessedWord: false,
 };
-
-export const start = createEvent('start');
-export const checkLetter = createEvent('check letter');
 
 export const $word = createStore(initialState, { name: 'word' })
   .on(start, (state) => {
-    const word = words[Math.floor(Math.random() * words.length)].toUpperCase();
+    const randInt = Math.floor(Math.random() * words.length);
+    const word = words[randInt].toUpperCase();
     return {
       ...state,
       word,
       mask: [...word].map(() => '_').join(''),
     };
   })
-  .on(checkLetter, (state, guessedLetter) => {
+  .on(guessLetter, (state, guessedLetter) => {
     const letterMap = [...state.word].map((letter) => (letter === guessedLetter ? guessedLetter : false));
     const mask = [...state.mask].map((_, index) => (letterMap[index] ? guessedLetter : state.mask[index]));
 
@@ -28,7 +29,14 @@ export const $word = createStore(initialState, { name: 'word' })
       ? {
           ...state,
           mask: mask.join(''),
-          ...(mask.includes('_') ? {} : { guessed: true })
+          guessedLetter,
+          correctLetter: true,
+          ...(mask.includes('_') ? {} : { guessedWord: true }),
         }
-      : { ...state, failed: state.failed + 1 };
+      : {
+          ...state,
+          failed: state.failed + 1,
+          guessedLetter,
+          correctLetter: false,
+        };
   });

@@ -1,25 +1,11 @@
 import * as PIXI from 'pixi.js';
-import { $word, start, checkLetter } from './services/word';
+import { $word } from './services/word';
+import { $game } from './services/game';
+import { start } from './events/game';
 
 import Keyboard from './keyboard';
-import words from './words';
 
-import store from '../redux/configureStore';
-import {
-  startGame,
-  showKeyboard,
-  incorrectKey,
-  finishGame,
-  setWord,
-} from '../redux/actions';
 import { MAX_GUESSES } from './constants';
-
-// new stuff
-$word.watch(console.log);
-start()
-checkLetter('A')
-checkLetter('B')
-checkLetter('C')
 
 let word = [],
   anim,
@@ -27,8 +13,7 @@ let word = [],
   guessText,
   startButton,
   keyboard,
-  elapsed = Date.now(),
-  unsubscribe;
+  elapsed = Date.now();
 
 let style = new PIXI.TextStyle({
   fontFamily: 'Chelsea Market',
@@ -54,45 +39,21 @@ const app = new PIXI.Application({
 document.body.appendChild(app.view);
 
 const loader = app.loader;
-// loader.add('fonts/font.fnt')
 loader.add('images/particle.png');
 loader.add('images/data.json').load(setup);
 
-function subscribe() {
-  return store.subscribe(() => {
-    updateanim(store.getState().game.attemptsLeft);
-    if (!store.getState().game.complete) {
-      updateGuessText(store.getState().game.mask.join(' '));
-    }
-  });
-}
-
-onComplete = onComplete.bind(this);
 updateGuessText = updateGuessText.bind(this);
-observeStore(store, (state) => state.complete, onComplete);
 
-function onComplete(complete) {
-  console.log('app onComplete', complete);
-  if (complete) {
-    gameOver();
+$word.updates.watch(({ mask, failed }) => {
+  updateGuessText(mask);
+  updateAnimation(failed)
+});
+
+$game.watch(({ guessedWord, hung }) => {
+  if(guessedWord || hung) {
+    gameOver(guessedWord)
   }
-}
-
-function observeStore(store, select, onChange) {
-  let currentState;
-
-  function handleChange() {
-    let nextState = select(store.getState().game);
-    if (nextState !== currentState) {
-      currentState = nextState;
-      onChange(currentState);
-    }
-  }
-
-  let unsubscribe = store.subscribe(handleChange);
-  handleChange();
-  return unsubscribe;
-}
+});
 
 function setup() {
   var frames = [];
@@ -123,14 +84,7 @@ function setup() {
   keyboard.y = app.screen.height - 60 - keyboard.height;
 
   addActions();
-  unsubscribe = subscribe();
   animate();
-}
-
-function getWord() {
-  let len = words.length;
-  word = words[Math.floor(Math.random() * len)].toUpperCase().split('');
-  store.dispatch(setWord(word));
 }
 
 function updateStatusText(msg, color = '#00ff99') {
@@ -144,33 +98,22 @@ function updateGuessText(msg) {
   guessText.x = app.screen.width * 0.5 - guessText.width * 0.5;
 }
 
-function updateanim(attemptsLeft) {
-  let frame = MAX_GUESSES - attemptsLeft;
+function updateAnimation(frame) {
   anim.gotoAndStop(frame);
 }
 
-function gameOver() {
-  if (hasSolved()) {
+function gameOver(hasWon) {
+  if (hasWon) {
     updateStatusText('YOU WON!!!');
   } else {
     updateStatusText('OHHH UNLUCKY!', '#990000');
   }
-  updateGuessText(store.getState().game.word.join(' '));
+
   startButton.visible = true;
-  unsubscribe();
 }
 
 function restartGame() {
   updateStatusText("Let's Play HANGMAN");
-  unsubscribe = subscribe();
-  store.dispatch(startGame());
-  store.dispatch(showKeyboard(true));
-
-  getWord();
-}
-
-function hasSolved() {
-  return store.getState().game.mask.indexOf('_') === -1;
 }
 
 function addActions() {
@@ -179,6 +122,7 @@ function addActions() {
   startButton.on('pointerdown', () => {
     startButton.visible = false;
     restartGame();
+    start();
   });
 
   let startText = new PIXI.Text('START GAME', {
