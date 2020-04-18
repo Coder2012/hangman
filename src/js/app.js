@@ -1,19 +1,15 @@
-import * as PIXI from 'pixi.js';
-import { $word } from './services/word';
-import { $game } from './services/game';
-import { start } from './events/game';
+import * as PIXI from 'pixi.js'
+import { wordService } from './services/word'
+import { gameService } from './services/game'
 
-import Keyboard from './keyboard';
+import Keyboard from './keyboard'
 
-import { MAX_GUESSES } from './constants';
-
-let word = [],
-  anim,
-  statusText,
-  guessText,
-  startButton,
-  keyboard,
-  elapsed = Date.now();
+let anim
+let statusText
+let guessText
+let startButton
+let keyboard
+let elapsed = Date.now()
 
 let style = new PIXI.TextStyle({
   fontFamily: 'Chelsea Market',
@@ -26,129 +22,130 @@ let style = new PIXI.TextStyle({
   dropShadowColor: '#000000',
   dropShadowBlur: 4,
   dropShadowAngle: Math.PI / 6,
-  dropShadowDistance: 6,
-});
+  dropShadowDistance: 6
+})
 
 const app = new PIXI.Application({
   autoResize: true,
   width: window.innerWidth,
   height: window.innerHeight,
-  resolution: window.devicePixelRatio,
-});
+  resolution: window.devicePixelRatio
+})
 
-document.body.appendChild(app.view);
+document.body.appendChild(app.view)
 
-const loader = app.loader;
-loader.add('images/particle.png');
-loader.add('images/data.json').load(setup);
+const loader = app.loader
+loader.add('images/particle.png')
+loader.add('images/data.json').load(setup)
 
-updateGuessText = updateGuessText.bind(this);
+// eslint-disable-next-line no-func-assign
+updateGuessText = updateGuessText.bind(this)
 
-$word.updates.watch(({ mask, failed }) => {
-  updateGuessText(mask);
+wordService.$.updates.watch(({ mask, failed }) => {
+  updateGuessText(mask)
   updateAnimation(failed)
-});
+})
 
-$game.watch(({ guessedWord, hung }) => {
-  if(guessedWord || hung) {
+gameService.$.watch(({ guessedWord, hung }) => {
+  if (guessedWord || hung) {
     gameOver(guessedWord)
   }
-});
+})
 
-function setup() {
-  var frames = [];
+function setup () {
+  var frames = []
 
   for (var i = 1; i < 8; i++) {
-    console.log(`frame_${i}.png`);
-    frames.push(PIXI.Texture.fromFrame(`frame_${i}.png`));
+    console.log(`frame_${i}.png`)
+    frames.push(PIXI.Texture.fromFrame(`frame_${i}.png`))
   }
 
-  anim = new PIXI.extras.AnimatedSprite(frames);
-  anim.x = app.screen.width * 0.5 - anim.width * 0.5;
-  anim.y = 110;
-  app.stage.addChild(anim);
+  anim = new PIXI.extras.AnimatedSprite(frames)
+  anim.x = app.screen.width * 0.5 - anim.width * 0.5
+  anim.y = 110
+  app.stage.addChild(anim)
 
-  statusText = new PIXI.Text("Let's Play HANGMAN", style);
-  statusText.x = app.screen.width * 0.5 - statusText.width * 0.5;
-  statusText.y = 30;
+  statusText = new PIXI.Text("Let's Play HANGMAN", style)
+  statusText.x = app.screen.width * 0.5 - statusText.width * 0.5
+  statusText.y = 30
 
-  guessText = new PIXI.Text('', style);
-  guessText.y = statusText.y + 40;
+  guessText = new PIXI.Text('', style)
+  guessText.y = statusText.y + 40
 
-  keyboard = new Keyboard(app, loader);
-  app.stage.addChild(keyboard);
+  keyboard = new Keyboard(app, loader)
+  app.stage.addChild(keyboard)
 
-  app.stage.addChild(statusText);
-  app.stage.addChild(guessText);
-  keyboard.x = app.screen.width * 0.5 - keyboard.width * 0.5;
-  keyboard.y = app.screen.height - 60 - keyboard.height;
+  app.stage.addChild(statusText)
+  app.stage.addChild(guessText)
+  keyboard.x = app.screen.width * 0.5 - keyboard.width * 0.5
+  keyboard.y = app.screen.height - 60 - keyboard.height
 
-  addActions();
-  animate();
+  addActions()
+  animate()
 }
 
-function updateStatusText(msg, color = '#00ff99') {
-  statusText.text = msg;
-  statusText.style.fill = ['#ffffff', color];
-  statusText.x = app.screen.width * 0.5 - statusText.width * 0.5;
+function updateStatusText (msg, color = '#00ff99') {
+  statusText.text = msg
+  statusText.style.fill = ['#ffffff', color]
+  statusText.x = app.screen.width * 0.5 - statusText.width * 0.5
 }
 
-function updateGuessText(msg) {
-  guessText.text = msg;
-  guessText.x = app.screen.width * 0.5 - guessText.width * 0.5;
+function updateGuessText (msg) {
+  guessText.text = msg.split('').join(' ')
+  guessText.x = app.screen.width * 0.5 - guessText.width * 0.5
 }
 
-function updateAnimation(frame) {
-  anim.gotoAndStop(frame);
+function updateAnimation (frame) {
+  anim.gotoAndStop(frame)
 }
 
-function gameOver(hasWon) {
+function gameOver (hasWon) {
   if (hasWon) {
-    updateStatusText('YOU WON!!!');
+    updateStatusText('YOU WON!!!')
   } else {
-    updateStatusText('OHHH UNLUCKY!', '#990000');
+    updateStatusText('OHHH UNLUCKY!', '#990000')
   }
 
-  startButton.visible = true;
+  startButton.visible = true
 }
 
-function restartGame() {
-  updateStatusText("Let's Play HANGMAN");
+function restartGame () {
+  updateStatusText("Let's Play HANGMAN")
 }
 
-function addActions() {
-  startButton = new PIXI.Sprite();
-  startButton.interactive = true;
+function addActions () {
+  startButton = new PIXI.Sprite()
+  startButton.interactive = true
   startButton.on('pointerdown', () => {
-    startButton.visible = false;
-    restartGame();
-    start();
-  });
+    startButton.visible = false
+    restartGame()
+    gameService.start()
+  })
 
   let startText = new PIXI.Text('START GAME', {
     fontFamily: 'Chelsea Market',
     fontSize: 32,
-    fill: '#628297',
-  });
+    fill: '#628297'
+  })
 
-  let background = new PIXI.Graphics();
-  background.beginFill(0x00ff00, 0.2);
-  background.drawRoundedRect(0, 0, 240, 40, 8);
-  background.endFill();
+  let background = new PIXI.Graphics()
+  background.beginFill(0x00ff00, 0.2)
+  background.drawRoundedRect(0, 0, 240, 40, 8)
+  background.endFill()
 
-  startText.x = background.width * 0.5 - startText.width * 0.5;
-  startButton.x = app.screen.width * 0.5 - background.width * 0.5;
-  startButton.y = app.screen.height - 60;
+  startText.x = background.width * 0.5 - startText.width * 0.5
+  startButton.x = app.screen.width * 0.5 - background.width * 0.5
+  startButton.y = app.screen.height - 60
 
-  startButton.addChild(background, startText);
-  app.stage.addChild(startButton);
+  startButton.addChild(background, startText)
+  app.stage.addChild(startButton)
 }
 
-function animate() {
-  const now = Date.now();
-  if (keyboard) keyboard.update((now - elapsed) * 0.001);
+function animate () {
+  const now = Date.now()
+  if (keyboard) keyboard.update((now - elapsed) * 0.001)
 
-  elapsed = now;
-  app.renderer.render(app.stage);
-  requestAnimationFrame(animate);
+  elapsed = now
+  app.renderer.render(app.stage)
+  requestAnimationFrame(animate)
 }
