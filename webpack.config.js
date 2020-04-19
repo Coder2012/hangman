@@ -21,18 +21,7 @@ module.exports = {
     inline: true
   },
   module: {
-    rules: [{
-      test: /\.js$/,
-      exclude: [/node_modules/],
-      use: [{
-        loader: 'babel-loader',
-        options: {
-          presets: [
-            ['env', { modules: false }]
-          ]
-        }
-      }]
-    }]
+    rules: [{ test: /\.js$/, exclude: /node_modules/, loader: "babel-loader" }]
   },
   plugins: [
     new HtmlWebpackPlugin({
