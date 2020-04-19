@@ -1,3 +1,3 @@
-import { createEvent } from 'effector-logger'
+import { domain } from '../domain'
 
-export const start = createEvent('start')
+export const start = domain.event('start')
