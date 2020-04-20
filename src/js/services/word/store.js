@@ -1,4 +1,4 @@
-import { createStore } from 'effector-logger'
+import { domain } from '../domain'
 import * as events from './events'
 import * as gameEvents from '../game/events'
 import words from '../../words'
@@ -12,7 +12,7 @@ const initialState = {
   guessedWord: false
 }
 
-export const $word = createStore(initialState, { name: 'word' })
+export const $word = domain.store(initialState, { name: 'word' })
   .on(gameEvents.start, (state) => {
     const randInt = Math.floor(Math.random() * words.length)
     const word = words[randInt].toUpperCase()
