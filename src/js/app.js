@@ -10,10 +10,11 @@ let guessText
 let startButton
 let keyboard
 let elapsed = Date.now()
+let buttonFlasher
 
 let style = new PIXI.TextStyle({
-  fontFamily: 'Chelsea Market',
-  fontSize: 32,
+  fontFamily: 'Bungee',
+  fontSize: 26,
   fontWeight: 'bold',
   fill: ['#ffffff', '#00ff99'], // gradient
   stroke: '#4a1850',
@@ -46,8 +47,9 @@ wordService.$.updates.watch(({ mask, failed }) => {
   updateAnimation(failed)
 })
 
-gameService.$.watch(({ guessedWord, hung }) => {
+gameService.$.watch(({ word, guessedWord, hung }) => {
   if (guessedWord || hung) {
+    updateGuessText(word)
     gameOver(guessedWord)
   }
 })
@@ -55,14 +57,17 @@ gameService.$.watch(({ guessedWord, hung }) => {
 function setup () {
   var frames = []
 
-  for (var i = 1; i < 8; i++) {
-    console.log(`frame_${i}.png`)
-    frames.push(PIXI.Texture.fromFrame(`frame_${i}.png`))
+  for (var i = 1; i <= 8; i++) {
+    frames.push(PIXI.Texture.fromFrame(`image_${i}.png`))
   }
 
+  const scale = 0.5
+
   anim = new PIXI.extras.AnimatedSprite(frames)
-  anim.x = app.screen.width * 0.5 - anim.width * 0.5
+  anim.x = app.screen.width * 0.5 - ((anim.width * 0.5)*scale);
   anim.y = 110
+  anim.scale.x = scale
+  anim.scale.y = scale
   app.stage.addChild(anim)
 
   statusText = new PIXI.Text("Let's Play HANGMAN", style)
@@ -81,6 +86,7 @@ function setup () {
   keyboard.y = app.screen.height - 60 - keyboard.height
 
   addActions()
+  flashOn()
   animate()
 }
 
@@ -101,16 +107,20 @@ function updateAnimation (frame) {
 
 function gameOver (hasWon) {
   if (hasWon) {
-    updateStatusText('YOU WON!!!')
+    updateStatusText('WELL DONE YOU WON')
   } else {
-    updateStatusText('OHHH UNLUCKY!', '#990000')
+    updateStatusText('UNLUCKY YOU LOST', '#990000')
   }
-
+  keyboard.stop()
   startButton.visible = true
 }
 
 function restartGame () {
   updateStatusText("Let's Play HANGMAN")
+  gameService.reset()
+  keyboard.reset()
+  keyboard.start()
+  gameService.start()
 }
 
 function addActions () {
@@ -119,26 +129,38 @@ function addActions () {
   startButton.on('pointerdown', () => {
     startButton.visible = false
     restartGame()
-    gameService.start()
   })
 
   let startText = new PIXI.Text('START GAME', {
-    fontFamily: 'Chelsea Market',
-    fontSize: 32,
+    fontFamily: 'Bungee',
+    fontSize: 24,
     fill: '#628297'
   })
 
   let background = new PIXI.Graphics()
-  background.beginFill(0x00ff00, 0.2)
-  background.drawRoundedRect(0, 0, 240, 40, 8)
+  background.beginFill(0x00ff00, 1)
+  background.drawRoundedRect(0, 0, 180, 30, 8)
   background.endFill()
+  background.alpha = .2
 
   startText.x = background.width * 0.5 - startText.width * 0.5
   startButton.x = app.screen.width * 0.5 - background.width * 0.5
-  startButton.y = app.screen.height - 60
+  startButton.y = app.screen.height - 55
 
   startButton.addChild(background, startText)
   app.stage.addChild(startButton)
+}
+
+function flashOn() {
+  let background = startButton.getChildAt(0)
+
+  buttonFlasher = setInterval(() => {
+    background.alpha = background.alpha === 0.2 ? 0.8 : 0.2
+  }, 500)
+}
+
+function flashOff() {
+  clearInterval(buttonFlasher)
 }
 
 function animate () {

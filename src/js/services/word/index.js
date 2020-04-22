@@ -3,5 +3,5 @@ import { $word as $ } from './store'
 
 export const wordService = {
   $,
-  guessLetter
+  guessLetter,
 }

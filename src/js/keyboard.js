@@ -4,14 +4,14 @@ import Particles from './particles'
 import { wordService } from './services/word'
 
 class Keyboard extends PIXI.Container {
-  constructor (app, loader) {
+  constructor(app, loader) {
     super()
 
     this.renderer = app.renderer
     this.stage = app.stage
     this.loader = loader
-    this.interactive = true
-    this.keySize = 48
+    this.interactiveChildren = false
+    this.keySize = 38
     this.keys = []
 
     this.createKeys()
@@ -22,27 +22,27 @@ class Keyboard extends PIXI.Container {
     })
   }
 
-  setSelectedKey (id, correct) {
-    let tint
+  setSelectedKey(id, correct) {
+    let color
 
     if (correct) {
-      tint = 0x00ff00
+      color = '#00ff00'
       this.particles.position = { x: this.keys[id].x + this.keySize / 2, y: this.keys[id].y + this.keySize / 2 }
       this.particles.emit = true
       setTimeout(() => {
         this.particles.emit = false
       }, 500)
     } else {
-      tint = 0xff0000
+      color = '#ff0000'
     }
 
     if (id) {
-      this.keys[id].text.tint = tint
+      this.keys[id].text.style.fill = color
       this.keys[id].interactive = false
     }
   }
 
-  createKeys () {
+  createKeys() {
     let x = 0
     let y = 0
 
@@ -66,13 +66,13 @@ class Keyboard extends PIXI.Container {
     }
   }
 
-  addKey (letter) {
+  addKey(letter) {
     let key = new PIXI.Sprite()
     key.addChild(this.addBackground())
 
     let text = this.addText(letter)
     text.x = this.keySize * 0.5 - text.width * 0.5
-    text.y = this.keySize * 0.5 - text.height * 0.5
+    text.y = (this.keySize * 0.5 - text.height * 0.5) - 3
     key.addChild(text)
 
     key.id = letter
@@ -80,41 +80,47 @@ class Keyboard extends PIXI.Container {
     return key
   }
 
-  addText (letter) {
+  addText(letter) {
     return new PIXI.Text(letter, {
-      fontFamily: 'Chelsea Market',
-      fontSize: 48,
-      fill: '#628297'
+      fontFamily: 'Bungee',
+      fontSize: 34,
+      fill: '#444444',
     })
   }
 
-  addBackground () {
+  addBackground() {
     const textbg = new PIXI.Graphics()
-    textbg.lineStyle(2, 0x628297, 1)
-    textbg.beginFill(0x000000, 0.2)
+    textbg.lineStyle(4, 0x333333, 1)
+    textbg.beginFill(0x999999, 1)
     textbg.drawRoundedRect(0, 0, this.keySize, this.keySize, 8)
     textbg.endFill()
 
     return textbg
   }
 
-  createEmitter () {
+  createEmitter() {
     this.particles = new Particles(this, this.loader)
     this.particles.position = new PIXI.Point(0, 0)
     this.particles.init()
   }
 
-  enable (value) {
+  reset() {
     Object.keys(this.keys).forEach((id) => {
-      let key = this.keys[id]
-      key.interactive = value
-      if (value) {
-        key.text.tint = 0x0000dd
-      }
+      const key = this.keys[id]
+      key.text.style.fill = '#333333'
+      key.interactive = true
     })
   }
 
-  update (value) {
+  start() {
+    this.interactiveChildren = true
+  }
+
+  stop() {
+    this.interactiveChildren = false
+  }
+
+  update(value) {
     this.particles.update(value)
   }
 }
