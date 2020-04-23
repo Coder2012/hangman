@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js'
-import Particles from './particles'
+// import Particles from './particles'
 
 import { wordService } from './services/word'
 
@@ -27,11 +27,11 @@ class Keyboard extends PIXI.Container {
 
     if (correct) {
       color = '#00ff00'
-      this.particles.position = { x: this.keys[id].x + this.keySize / 2, y: this.keys[id].y + this.keySize / 2 }
-      this.particles.emit = true
-      setTimeout(() => {
-        this.particles.emit = false
-      }, 500)
+      // this.particles.position = { x: this.keys[id].x + this.keySize / 2, y: this.keys[id].y + this.keySize / 2 }
+      // this.particles.emit = true
+      // setTimeout(() => {
+      //   this.particles.emit = false
+      // }, 500)
     } else {
       color = '#ff0000'
     }
@@ -99,9 +99,9 @@ class Keyboard extends PIXI.Container {
   }
 
   createEmitter() {
-    this.particles = new Particles(this, this.loader)
-    this.particles.position = new PIXI.Point(0, 0)
-    this.particles.init()
+    // this.particles = new Particles(this, this.loader)
+    // this.particles.position = new PIXI.Point(0, 0)
+    // this.particles.init()
   }
 
   reset() {
@@ -121,7 +121,7 @@ class Keyboard extends PIXI.Container {
   }
 
   update(value) {
-    this.particles.update(value)
+    // this.particles.update(value)
   }
 }
 

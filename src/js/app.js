@@ -58,12 +58,12 @@ function setup () {
   var frames = []
 
   for (var i = 1; i <= 8; i++) {
-    frames.push(PIXI.Texture.fromFrame(`image_${i}.png`))
+    frames.push(PIXI.Texture.from(`image_${i}.png`))
   }
 
   const scale = 0.5
 
-  anim = new PIXI.extras.AnimatedSprite(frames)
+  anim = new PIXI.AnimatedSprite(frames)
   anim.x = app.screen.width * 0.5 - ((anim.width * 0.5)*scale);
   anim.y = 110
   anim.scale.x = scale
