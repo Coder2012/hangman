@@ -3,27 +3,25 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "dependencies": {
-    "redux": "^4.0.1"
-  },
   "devDependencies": {
     "@babel/core": "^7.9.0",
     "@babel/plugin-proposal-object-rest-spread": "^7.9.5",
     "@babel/preset-env": "^7.9.5",
     "babel-loader": "^8.1.0",
-    "copy-webpack-plugin": "2.1.6",
+    "copy-webpack-plugin": "^5.1.1",
     "effector": "^20.14.0",
     "effector-logger": "^0.5.0",
-    "html-webpack-plugin": "^2.28.0",
+    "html-webpack-plugin": "^4.2.0",
     "pixi-particles": "^4.2.0",
     "pixi.js": "^5.2.2",
-    "webpack": "^3.0.0",
-    "webpack-dev-server": "^2.4.1"
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.10.3"
   },
   "scripts": {
-    "build": "webpack",
+    "build": "webpack -p --mode production",
     "watch": "webpack --watch",
-    "start": "webpack-dev-server --inline",
+    "start": "webpack-dev-server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

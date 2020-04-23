@@ -1,5 +1,7 @@
 import * as PIXI from 'pixi.js'
-require('pixi-particles')
+import * as particles from 'pixi-particles'
+
+console.log('particles', particles)
 
 class Particles {
   constructor (container, loader) {
@@ -7,57 +9,13 @@ class Particles {
     this._loader = loader
     this._position = undefined
     this._emit = false
-    // this._config = {
-    //   'alpha': {
-    //     'start': 0.4,
-    //     'end': 0
-    //   },
-    //   'scale': {
-    //     'start': 1,
-    //     'end': 0.3
-    //   },
-    //   'color': {
-    //     'start': '000000',
-    //     'end': '000000'
-    //   },
-    //   'speed': {
-    //     'start': 100,
-    //     'end': 200
-    //   },
-    //   'startRotation': {
-    //     'min': 0,
-    //     'max': 360
-    //   },
-    //   'rotationSpeed': {
-    //     'min': 0,
-    //     'max': 10
-    //   },
-    //   'lifetime': {
-    //     'min': 0.1,
-    //     'max': 0.2
-    //   },
-    //   'frequency': 0.008,
-    //   'emitterLifetime': 0.31,
-    //   'maxParticles': 100,
-    //   'pos': {
-    //     'x': 0,
-    //     'y': 0
-    //   },
-    //   'addAtBack': false,
-    //   'spawnType': 'circle',
-    //   'spawnCircle': {
-    //     'x': 0,
-    //     'y': 0,
-    //     'r': 20
-    //   }
-    // }
     this._config = {
       "alpha": {
         "start": 0.8,
         "end": 0.4
       },
       "scale": {
-        "start": 1,
+        "start": 0.6,
         "end": 0.3
       },
       "color": {
@@ -77,8 +35,8 @@ class Particles {
         "max": 0
       },
       "lifetime": {
-        "min": 0.8,
-        "max": 0.8
+        "min": 0.4,
+        "max": 0.4
       },
       "frequency": 0.2,
       "emitterLifetime": 0.5,
@@ -96,7 +54,7 @@ class Particles {
   }
 
   init () {
-    this._emitterContainer = new PIXI.particles.ParticleContainer()
+    this._emitterContainer = new PIXI.ParticleContainer()
     this._emitterContainer.setProperties({
       scale: true,
       position: true,
@@ -105,7 +63,7 @@ class Particles {
       alpha: true
     })
     this._container.addChild(this._emitterContainer)
-    this._emitter = new PIXI.particles.Emitter(this._emitterContainer, [this._loader.resources['images/particle.png'].texture], this._config)
+    this._emitter = new particles.Emitter(this._emitterContainer, [this._loader.resources['assets/particle.png'].texture], this._config)
     this._emitter.updateOwnerPos(this.position.x, this.position.y)
   }
   get position () {

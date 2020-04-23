@@ -1,14 +1,12 @@
-const webpack = require('webpack')
 const path = require('path')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
-const fontsInput = 'fonts'
-const fontsOutput = 'fonts'
-const imagesInput = 'images'
-const imagesOutput = 'images'
+const assetsFrom = path.resolve(__dirname, 'public/assets')
+const assetsTo = 'assets'
 
 module.exports = {
+  mode: 'development',
   context: path.resolve(__dirname, 'src'),
   entry: './js/app.js',
   output: {
@@ -29,8 +27,7 @@ module.exports = {
       template: 'index.html'
     }),
     new CopyWebpackPlugin([
-      { from: `${imagesInput}`, to: `${imagesOutput}` },
-      { from: `${fontsInput}`, to: `${fontsOutput}` }
+      { from: `${assetsFrom}`, to: `${assetsTo}` },
     ])
   ]
 }

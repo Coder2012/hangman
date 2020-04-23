@@ -36,8 +36,8 @@ const app = new PIXI.Application({
 document.body.appendChild(app.view)
 
 const loader = app.loader
-loader.add('images/particle.png')
-loader.add('images/data.json').load(setup)
+loader.add('assets/particle.png')
+loader.add('assets/data.json').load(setup)
 
 // eslint-disable-next-line no-func-assign
 updateGuessText = updateGuessText.bind(this)
