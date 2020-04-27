@@ -1,7 +1,7 @@
-import { domain } from '../domain'
+import { domain } from 'services/domain'
 import * as events from './events'
-import * as gameEvents from '../game/events'
-import { WORDS } from '../../constants'
+import * as gameEvents from '@/services/game/events'
+import { WORDS } from '@/constants'
 
 const initialState = {
   word: '',

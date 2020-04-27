@@ -1,8 +1,8 @@
 import * as PIXI from 'pixi.js'
-import { wordService } from './services/word'
-import { gameService } from './services/game'
+import { wordService } from 'services/word'
+import { gameService } from 'services/game'
 
-import Keyboard from './keyboard'
+import Keyboard from '@/keyboard'
 
 let anim
 let statusText

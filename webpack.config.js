@@ -14,6 +14,12 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js',
   },
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, 'src'),
+      'services': path.resolve(__dirname, 'src', 'services'),
+    },
+  },
   devtool: 'source-map',
   devServer: {
     contentBase: 'dist',
