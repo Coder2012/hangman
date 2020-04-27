@@ -1,4 +1,5 @@
 const path = require('path')
+const Dotenv = require('dotenv-webpack')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
@@ -8,26 +9,25 @@ const assetsTo = 'assets'
 module.exports = {
   mode: 'development',
   context: path.resolve(__dirname, 'src'),
-  entry: './js/app.js',
+  entry: './app.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'bundle.js'
+    filename: 'bundle.js',
   },
   devtool: 'source-map',
   devServer: {
     contentBase: 'dist',
-    inline: true
+    inline: true,
   },
   module: {
-    rules: [{ test: /\.js$/, exclude: /node_modules/, loader: "babel-loader" }]
+    rules: [{ test: /\.js$/, exclude: /node_modules/, loader: 'babel-loader' }],
   },
   plugins: [
     new HtmlWebpackPlugin({
       title: 'Hangman',
-      template: 'index.html'
+      template: path.resolve(__dirname, 'public', 'index.html'),
     }),
-    new CopyWebpackPlugin([
-      { from: `${assetsFrom}`, to: `${assetsTo}` },
-    ])
-  ]
+    new CopyWebpackPlugin([{ from: `${assetsFrom}`, to: `${assetsTo}` }]),
+    new Dotenv(),
+  ],
 }

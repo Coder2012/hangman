@@ -1,8 +1,6 @@
 import * as PIXI from 'pixi.js'
 import * as particles from 'pixi-particles'
 
-console.log('particles', particles)
-
 class Particles {
   constructor (container, loader) {
     this._container = container
