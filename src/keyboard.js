@@ -4,18 +4,18 @@ import Particles from '@/particles'
 import { wordService } from 'services/word'
 
 class Keyboard extends PIXI.Container {
-  constructor(app, loader) {
+  constructor(loader) {
     super()
 
-    this.renderer = app.renderer
-    this.stage = app.stage
-    this.loader = loader
     this.interactiveChildren = false
     this.keySize = 38
     this.keys = []
+    this.elapsed = Date.now()
 
     this.createKeys()
-    this.createEmitter()
+    this.createEmitter(loader)
+    this.update = this.update.bind(this)
+    this.update()
 
     wordService.$.watch((state) => {
       this.setSelectedKey(state.guessedLetter, state.correctLetter)
@@ -98,8 +98,8 @@ class Keyboard extends PIXI.Container {
     return textbg
   }
 
-  createEmitter() {
-    this.particles = new Particles(this, this.loader)
+  createEmitter(loader) {
+    this.particles = new Particles(this, loader)
     this.particles.position = new PIXI.Point(0, 0)
     this.particles.init()
   }
@@ -120,8 +120,11 @@ class Keyboard extends PIXI.Container {
     this.interactiveChildren = false
   }
 
-  update(value) {
-    this.particles.update(value)
+  update() {
+    const now = Date.now()
+    this.particles.update((now - this.elapsed) * 0.001)
+    this.elapsed = now
+    requestAnimationFrame(this.update)
   }
 }
 

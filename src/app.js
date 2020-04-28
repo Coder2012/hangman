@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js'
 import { wordService } from 'services/word'
 import { gameService } from 'services/game'
+import { MAX_GUESSES } from '@/constants'
 
 import Keyboard from '@/keyboard'
 
@@ -9,7 +10,6 @@ let statusText
 let guessText
 let startButton
 let keyboard
-let elapsed = Date.now()
 let buttonFlasher
 
 let style = new PIXI.TextStyle({
@@ -23,19 +23,19 @@ let style = new PIXI.TextStyle({
   dropShadowColor: '#000000',
   dropShadowBlur: 4,
   dropShadowAngle: Math.PI / 6,
-  dropShadowDistance: 6
+  dropShadowDistance: 6,
 })
 
 const app = new PIXI.Application({
-  autoResize: true,
+  antialias: true,
   width: window.innerWidth,
   height: window.innerHeight,
-  resolution: window.devicePixelRatio
+  resolution: window.devicePixelRatio,
 })
 
 document.body.appendChild(app.view)
 
-const loader = app.loader
+const loader = PIXI.Loader.shared
 loader.add('assets/particle.png')
 loader.add('assets/data.json').load(setup)
 
@@ -54,17 +54,12 @@ gameService.$.watch(({ word, guessedWord, hung }) => {
   }
 })
 
-function setup () {
-  var frames = []
-
-  for (var i = 1; i <= 8; i++) {
-    frames.push(PIXI.Texture.from(`image_${i}.png`))
-  }
-
+function setup() {
   const scale = 0.5
+  const sheet = PIXI.Loader.shared.resources["assets/data.json"].spritesheet;
+  anim = new PIXI.AnimatedSprite(sheet.animations["image"]);
 
-  anim = new PIXI.AnimatedSprite(frames)
-  anim.x = app.screen.width * 0.5 - ((anim.width * 0.5)*scale);
+  anim.x = app.screen.width * 0.5 - anim.width * 0.5 * scale
   anim.y = 110
   anim.scale.x = scale
   anim.scale.y = scale
@@ -77,7 +72,7 @@ function setup () {
   guessText = new PIXI.Text('', style)
   guessText.y = statusText.y + 40
 
-  keyboard = new Keyboard(app, loader)
+  keyboard = new Keyboard(loader)
   app.stage.addChild(keyboard)
 
   app.stage.addChild(statusText)
@@ -87,25 +82,24 @@ function setup () {
 
   addActions()
   flashOn()
-  animate()
 }
 
-function updateStatusText (msg, color = '#00ff99') {
+function updateStatusText(msg, color = '#00ff99') {
   statusText.text = msg
   statusText.style.fill = ['#ffffff', color]
   statusText.x = app.screen.width * 0.5 - statusText.width * 0.5
 }
 
-function updateGuessText (msg) {
+function updateGuessText(msg) {
   guessText.text = msg.split('').join(' ')
   guessText.x = app.screen.width * 0.5 - guessText.width * 0.5
 }
 
-function updateAnimation (frame) {
+function updateAnimation(frame) {
   anim.gotoAndStop(frame)
 }
 
-function gameOver (hasWon) {
+function gameOver(hasWon) {
   if (hasWon) {
     updateStatusText('WELL DONE YOU WON')
   } else {
@@ -115,7 +109,7 @@ function gameOver (hasWon) {
   startButton.visible = true
 }
 
-function restartGame () {
+function restartGame() {
   updateStatusText("Let's Play HANGMAN")
   gameService.reset()
   keyboard.reset()
@@ -123,7 +117,7 @@ function restartGame () {
   gameService.start()
 }
 
-function addActions () {
+function addActions() {
   startButton = new PIXI.Sprite()
   startButton.interactive = true
   startButton.on('pointerdown', () => {
@@ -134,14 +128,14 @@ function addActions () {
   let startText = new PIXI.Text('START GAME', {
     fontFamily: 'Bungee',
     fontSize: 24,
-    fill: '#628297'
+    fill: '#628297',
   })
 
   let background = new PIXI.Graphics()
   background.beginFill(0x00ff00, 1)
   background.drawRoundedRect(0, 0, 180, 30, 8)
   background.endFill()
-  background.alpha = .2
+  background.alpha = 0.2
 
   startText.x = background.width * 0.5 - startText.width * 0.5
   startButton.x = app.screen.width * 0.5 - background.width * 0.5
@@ -157,17 +151,4 @@ function flashOn() {
   buttonFlasher = setInterval(() => {
     background.alpha = background.alpha === 0.2 ? 0.8 : 0.2
   }, 500)
-}
-
-function flashOff() {
-  clearInterval(buttonFlasher)
-}
-
-function animate () {
-  const now = Date.now()
-  if (keyboard) keyboard.update((now - elapsed) * 0.001)
-
-  elapsed = now
-  app.renderer.render(app.stage)
-  requestAnimationFrame(animate)
 }
