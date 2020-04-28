@@ -45,6 +45,7 @@ class Keyboard extends PIXI.Container {
   createKeys() {
     let x = 0
     let y = 0
+    let padding = 4
 
     for (let n = 0; n < 26; n++) {
       let key = this.addKey(String.fromCharCode(65 + n))
@@ -55,11 +56,11 @@ class Keyboard extends PIXI.Container {
       key.x = x
       key.y = y
 
-      x += this.keySize
+      x += this.keySize + padding
 
-      if (x > 5 * this.keySize) {
+      if (x > 6 * this.keySize) {
         x = 0
-        y += this.keySize
+        y += this.keySize + padding
       }
 
       this.addChild(key)
