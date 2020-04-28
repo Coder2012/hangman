@@ -26,13 +26,13 @@ export const $word = domain
   .on(events.guessLetter, (state, guessedLetter) => {
     const letterMap = [...state.word].map((letter) => (letter === guessedLetter ? guessedLetter : false))
     const mask = [...state.mask].map((_, index) => (letterMap[index] ? guessedLetter : state.mask[index]))
-    const notGuessed = letterMap.some(Boolean)
+    const hasCorrectLetter = letterMap.some(Boolean)
 
     return {
       ...state,
-      ...(notGuessed ? { mask: mask.join('') } : { failed: state.failed + 1 }),
+      ...(hasCorrectLetter ? { mask: mask.join('') } : { failed: state.failed + 1 }),
       guessedLetter,
-      correctLetter: notGuessed,
+      correctLetter: hasCorrectLetter,
       ...(mask.includes('_') ? {} : { guessedWord: true }),
     }
   })
