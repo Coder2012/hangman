@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js'
-import Particles from './particles'
+import Particles from '@/particles'
 
-import { wordService } from './services/word'
+import { wordService } from 'services/word'
 
 class Keyboard extends PIXI.Container {
   constructor(app, loader) {
