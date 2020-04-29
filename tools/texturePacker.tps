@@ -4,7 +4,7 @@
         <key>fileFormatVersion</key>
         <int>4</int>
         <key>texturePackerVersion</key>
-        <string>4.9.0</string>
+        <string>5.3.0</string>
         <key>autoSDSettings</key>
         <array>
             <struct type="AutoSDSettings">
@@ -34,7 +34,7 @@
         <key>dataFormat</key>
         <string>pixijs4</string>
         <key>textureFileName</key>
-        <filename></filename>
+        <filename>../public/assets/data.png</filename>
         <key>flipPVR</key>
         <false/>
         <key>pvrCompressionQuality</key>
@@ -132,7 +132,7 @@
             <key>data</key>
             <struct type="DataFile">
                 <key>name</key>
-                <filename>data.json</filename>
+                <filename>../public/assets/data.json</filename>
             </struct>
         </map>
         <key>multiPack</key>
@@ -181,47 +181,55 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
-            <key type="filename">frame_1.png</key>
-            <key type="filename">frame_2.png</key>
-            <key type="filename">frame_3.png</key>
+            <key type="filename">../../blender/hangman/renders/image_1.png</key>
+            <key type="filename">../../blender/hangman/renders/image_2.png</key>
+            <key type="filename">../../blender/hangman/renders/image_3.png</key>
+            <key type="filename">../../blender/hangman/renders/image_4.png</key>
+            <key type="filename">../../blender/hangman/renders/image_5.png</key>
+            <key type="filename">../../blender/hangman/renders/image_6.png</key>
+            <key type="filename">../../blender/hangman/renders/image_7.png</key>
+            <key type="filename">../../blender/hangman/renders/image_8.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>38,50,77,100</rect>
+                <rect>128,128,256,256</rect>
                 <key>scale9Paddings</key>
-                <rect>38,50,77,100</rect>
+                <rect>128,128,256,256</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">frame_4.png</key>
-            <key type="filename">frame_5.png</key>
-            <key type="filename">frame_6.png</key>
-            <key type="filename">frame_7.png</key>
+            <key type="filename">../public/assets/background.jpg</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>39,50,79,100</rect>
+                <rect>150,240,300,480</rect>
                 <key>scale9Paddings</key>
-                <rect>39,50,79,100</rect>
+                <rect>150,240,300,480</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
         </map>
         <key>fileList</key>
         <array>
-            <filename>frame_3.png</filename>
-            <filename>frame_4.png</filename>
-            <filename>frame_5.png</filename>
-            <filename>frame_6.png</filename>
-            <filename>frame_7.png</filename>
-            <filename>frame_1.png</filename>
-            <filename>frame_2.png</filename>
+            <filename>../../blender/hangman/renders/image_1.png</filename>
+            <filename>../../blender/hangman/renders/image_2.png</filename>
+            <filename>../../blender/hangman/renders/image_3.png</filename>
+            <filename>../../blender/hangman/renders/image_4.png</filename>
+            <filename>../../blender/hangman/renders/image_5.png</filename>
+            <filename>../../blender/hangman/renders/image_6.png</filename>
+            <filename>../../blender/hangman/renders/image_7.png</filename>
+            <filename>../../blender/hangman/renders/image_8.png</filename>
+            <filename>../public/assets/background.jpg</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>

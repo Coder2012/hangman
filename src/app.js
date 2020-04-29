@@ -55,6 +55,13 @@ gameService.$.watch(({ word, guessedWord, hung }) => {
 })
 
 function setup() {
+  const sheet = PIXI.Loader.shared.resources['assets/data.json'].spritesheet
+
+  const background = new PIXI.Sprite(sheet.textures['background.jpg'])
+  console.log(background.width)
+  background.x = app.screen.width * 0.5 - background.width * 0.5
+  app.stage.addChild(background)
+
   statusText = new PIXI.Text("Let's Play HANGMAN", style)
   statusText.x = app.screen.width * 0.5 - statusText.width * 0.5
   statusText.y = 10
@@ -63,15 +70,13 @@ function setup() {
   guessText.y = statusText.y + statusText.height
 
   const scale = 0.5
-  const sheet = PIXI.Loader.shared.resources["assets/data.json"].spritesheet;
-  anim = new PIXI.AnimatedSprite(sheet.animations["image"]);
+  anim = new PIXI.AnimatedSprite(sheet.animations['image'])
 
   anim.x = app.screen.width * 0.5 - anim.width * 0.5 * scale
   anim.y = guessText.y + guessText.height
   anim.scale.x = scale
   anim.scale.y = scale
   app.stage.addChild(anim)
-
 
   keyboard = new Keyboard(loader)
   app.stage.addChild(keyboard)
