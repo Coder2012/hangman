@@ -8,7 +8,7 @@ class Keyboard extends PIXI.Container {
     super()
 
     this.interactiveChildren = false
-    this.keySize = 38
+    this.keySize = 34
     this.keys = []
     this.elapsed = Date.now()
 
@@ -45,7 +45,7 @@ class Keyboard extends PIXI.Container {
   createKeys() {
     let x = 0
     let y = 0
-    let padding = 4
+    let padding = 2
 
     for (let n = 0; n < 26; n++) {
       let key = this.addKey(String.fromCharCode(65 + n))
@@ -91,7 +91,7 @@ class Keyboard extends PIXI.Container {
 
   addBackground() {
     const textbg = new PIXI.Graphics()
-    textbg.lineStyle(4, 0x333333, 1)
+    textbg.lineStyle(2, 0x333333, 1)
     textbg.beginFill(0x999999, 1)
     textbg.drawRoundedRect(0, 0, this.keySize, this.keySize, 8)
     textbg.endFill()

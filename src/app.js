@@ -28,6 +28,7 @@ let style = new PIXI.TextStyle({
 
 const app = new PIXI.Application({
   antialias: true,
+  autoDensity: true,
   width: window.innerWidth,
   height: window.innerHeight,
   resolution: window.devicePixelRatio,
@@ -139,7 +140,7 @@ function addActions() {
 
   startText.x = background.width * 0.5 - startText.width * 0.5
   startButton.x = app.screen.width * 0.5 - background.width * 0.5
-  startButton.y = app.screen.height - 55
+  startButton.y = app.screen.height - 50
 
   startButton.addChild(background, startText)
   app.stage.addChild(startButton)
