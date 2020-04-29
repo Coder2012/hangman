@@ -1,7 +1,6 @@
 import * as PIXI from 'pixi.js'
 import { wordService } from 'services/word'
 import { gameService } from 'services/game'
-import { MAX_GUESSES } from '@/constants'
 
 import Keyboard from '@/keyboard'
 
@@ -56,22 +55,23 @@ gameService.$.watch(({ word, guessedWord, hung }) => {
 })
 
 function setup() {
+  statusText = new PIXI.Text("Let's Play HANGMAN", style)
+  statusText.x = app.screen.width * 0.5 - statusText.width * 0.5
+  statusText.y = 10
+
+  guessText = new PIXI.Text('', style)
+  guessText.y = statusText.y + statusText.height
+
   const scale = 0.5
   const sheet = PIXI.Loader.shared.resources["assets/data.json"].spritesheet;
   anim = new PIXI.AnimatedSprite(sheet.animations["image"]);
 
   anim.x = app.screen.width * 0.5 - anim.width * 0.5 * scale
-  anim.y = 110
+  anim.y = guessText.y + guessText.height
   anim.scale.x = scale
   anim.scale.y = scale
   app.stage.addChild(anim)
 
-  statusText = new PIXI.Text("Let's Play HANGMAN", style)
-  statusText.x = app.screen.width * 0.5 - statusText.width * 0.5
-  statusText.y = 30
-
-  guessText = new PIXI.Text('', style)
-  guessText.y = statusText.y + 40
 
   keyboard = new Keyboard(loader)
   app.stage.addChild(keyboard)
