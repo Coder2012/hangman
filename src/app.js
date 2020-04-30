@@ -58,7 +58,7 @@ function setup() {
   const sheet = PIXI.Loader.shared.resources['assets/data.json'].spritesheet
 
   const background = new PIXI.Sprite(sheet.textures['background.jpg'])
-  console.log(background.width)
+
   background.x = app.screen.width * 0.5 - background.width * 0.5
   app.stage.addChild(background)
 
