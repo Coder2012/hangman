@@ -1,4 +1,4 @@
 # hangman
 Hangman game in pixijs and Effector for state management
 
-[![Actions Status](https://github.com/{owner}/{repo}/workflows/{workflow_name}/badge.svg)](https://github.com/{owner}/{repo}/actions)
+[![Actions Status](https://github.com/Coder2012/hangman/workflows/Node.js%20CI/badge.svg)](https://github.com/Coder2012/hangman/actions)
