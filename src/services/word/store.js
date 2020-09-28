@@ -3,7 +3,7 @@ import * as events from './events'
 import * as gameEvents from '@/services/game/events'
 import { WORDS } from '@/constants'
 
-const initialState = {
+export const initialState = {
   word: '',
   mask: '',
   failed: 0,
