@@ -36,6 +36,6 @@
   "dependencies": {
     "effector": "^20.14.0",
     "pixi-particles": "^4.2.0",
-    "pixi.js": "^5.2.3"
+    "pixi.js": "^6.1.0"
   }
 }
